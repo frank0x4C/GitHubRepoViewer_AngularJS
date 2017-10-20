@@ -1,2 +1,3 @@
 # GitHubRepositoryViewer
-Plural Sight, Scott Allen Course
+Plural Sight, Scott Allen Course on AngularJS
+
