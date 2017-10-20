@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html ng-app="githubViewer"> <!--we use ng-app directive, to control area by angular-->
+
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js"></script>
+</head>
+
+<!---->
+<!-- controller manipulate $scope i.e. avoid interacting directly with html-->
+<!-- instead data is attached to the $scope object and we use binding to lift data into view-->
+<!--We create a modul  for our Controller to live in, to avoid Global scope-->
+<body ng-controller="MainController"> 
+  <div>
+  <!--{{}} are called data binding directives-->
+    <h2>{{message2}}</h2>
+
+
+    <h1>{{message1}}</h1>
+    <div>{{error}}</div>
+    
+    <!--ng-model directive is used to move data from view to model-->
+    <!--it will appears in the $scope as a user name property-->
+    <!--useful directive, can be applied to selects, text areas, will keep data sync -->
+
+    <form name="searchUser" ng-submit="search(username)" ng-init="myCol='lightblue'">
+      <input type="search" required placeholder="username to find" ng-model="username" style="background-color:{{myCol}}"> 
+      <input type="submit" value="Search">
+    </form>
+    <!--input type="submit" value="Search" ng-click="search(username)"-->
+    
+    <div ng-include ="userDetails" ng-show="user">
+    </div>
+    <!--ng-include can have an expression, can be resolved against $scope && the value that the expression yields-->
+    <!-- should be the location where Angular can go and grab the additional markup-->
+
+   </div> 
+</body>
+<!---->
+<!--We have learned that the way to make data appear on a web page in Angular-->
+<!--is to connect a $scope object to the Controller, usually "data attached to model" is called model-->
+<!--Data appears on a web page, the Model & Controller does not know or touch HTML/View-->
+<!--Controller & Model only focuse on gathering data & View only focus on presenting data-->
+<!--Binding expressions {{}} are used to display modle data on webpage (create view)-->
+<!-- Directives allow for for indriect Model View interaction, by movind data from View to Model-->
+
+<!--filters-->
+<!--{{repo | json}}, orderBy repo in repos | filter:searchTerm|orderBy:'name'-->
+<!--{{amount|currency:"USD$"}}, {{startDate|date:'short'}}, {{repo in repos|limitTo:10}}-->
+<!--{[user.name|uppercase}}-->
+
+</html>
