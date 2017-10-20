@@ -7,27 +7,52 @@
 
   var app = angular.module("githubViewer", []);
 
-  var MainController = function($scope, $http) {
+  var MainController = function(
+    $scope, github, $interval, $log, $anchorScroll, $location) {
 
-    var onUserComplete = function(response) {
-      $scope.user = response.data;
-      $http.get($scope.user.repos_url)
-        .then(onRepos, onError);
+    var onUserComplete = function(data) {
+      $scope.user = data;
+      github.getRepos($scope.user).then(onRepos, onError);
+      //$http.get($scope.user.repos_url)
+        //.then(onRepos, onError);
     };
 
-    var onRepos = function(response) {
-      $scope.repos = response.data;
+    var onRepos = function(data) {
+      $scope.repos = data;
+      $location.hash("userDetails");
+      $anchorScroll();
+      
     };
 
     var onError = function(reason) {
       $scope.error = "User data could not be found";
     };
+    
+    var decrementCountdown = function(){
+      
+      $scope.countdown -= 1;
+      if($scope.countdown < 1){
+        $scope.search($scope.username);
+      }
+    };
+    
+    var countdownInterval = null;
+    var startCountdown = function(){
+      countdownInterval = $interval(decrementCountdown, 1000, $scope.countdown);
+      
+    };
 
 // ng controllers can use services like https to grab data from web server
 //$https methods returns a promise object, we grab a reult in future by using then method 
     $scope.search = function(username) {
-      $http.get("https://api.github.com/users/" + username)
-        .then(onUserComplete, onError);
+      $log.info("Searching for " + username);
+      github.getUser(username).then(onUserComplete, onError);
+      //$http.get("https://api.github.com/users/" + username)
+        //.then(onUserComplete, onError);
+        if (countdownInterval) {
+          $interval.cancel(countdownInterval);
+          $scope.countdown=null;
+        }
     };
     
     $scope.username = "enter username to search"; //initilize username inside $scope
@@ -35,10 +60,12 @@
     $scope.message2 = "Welcom to Git Hub Viewer Application in AngularJS. From tutorial by K. Scott Allen on Plural Sight";
     $scope.repoSortOrder = 'stargazers-count';
     $scope.userDetails = "userDetails.html";
+    $scope.countdown=8;
+    startCountdown();
   };
 
 // calling the controller 
-  app.controller("MainController", ["$scope", "$http", MainController]);
+  app.controller("MainController", MainController);
 
 }()); 
 //COntroller live inside a module to avoid global scope, so we use iffy
